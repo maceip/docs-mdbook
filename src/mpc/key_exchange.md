@@ -1,6 +1,6 @@
 # Key Exchange
 
-In TLS, the first step towards obtaining TLS session keys is to compute a shared secret between the client and the server by running the [ECDH protocol](https://en.wikipedia.org/wiki/Elliptic-curve_Diffie–Hellman). The resulting shared secret in TLS terms is **called the pre-master secret `PMS`**.
+In TLS, the first step towards obtaining TLS session keys is to compute a shared secret between the client and the server by running the [ECDH protocol](https://en.wikipedia.org/wiki/Elliptic-curve_Diffie–Hellman). The resulting shared secret in TLS terms is **called the pre-master secret (PMS)**.
 
 With TLSNotary, at the end of the key exchange, the `Server` gets the `PMS` as usual. The `Prover` and the `Verifier`, jointly operating as the TLS client, compute additive shares of the `PMS`. This prevents either party from unilaterally sending or receiving messages with the `Server`. Subsequently, the authenticity and integrity of the messages are guaranteed to both the `Prover` and `Verifier`, while also keeping the plaintext hidden from the `Verifier`.
 
@@ -15,7 +15,8 @@ We will denote:
 - $S$ as the `Server`
 - $\mathbb{pms}$ as the TLS pre-master secret.
 
-Below is the 3-party ECDH protocol between $S$, $P$ and $V$, enabling $P$ and $V$ to arrive at shares of $\mathbb{pms}$.
+
+The 3-party ECDH protocol between $S$, $P$ and $V$ consists of following steps:
 
 
 1. $S$ sends its public key $Q_b$ to $P$, and $P$ forwards it to $V$
@@ -25,7 +26,9 @@ Below is the 3-party ECDH protocol between $S$, $P$ and $V$, enabling $P$ and $V
 5. $P$ computes an EC point $(x_p, y_p) = d_c * Q_b$
 6. $V$ computes an EC point $(x_q, y_q) = d_n * Q_b$
 
-Now our goal is to compute additive shares of $\mathbb{pms}$, which we'll redenote as $x_r$, using elliptic curve point addition
+Note that only $P$ communicates with $S$. $V$ does not know who $S$ is, and only communicates with $P$.
+
+The next step is to compute the two additive shares of $\mathbb{pms}$, which we denote as $x_r$, using elliptic curve point addition:
 
 $$ x_r = (\frac{y_q-y_p}{x_q-x_p})^2 - x_p - x_q $$
 
